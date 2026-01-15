@@ -1,162 +1,150 @@
-# evolyn-api
+# Evolyn-API
 
-Minimal Helidon MP project suitable to start from scratch.
+**Evolyn-API** is a **Helidon MP (MicroProfile)**–based backend service that provides authentication, authorization, and secure access for the Evolyn platform. It serves as the entry point for client applications and issues **JWT tokens** used to access downstream Evolyn services.
 
-## Build and run
+---
 
+## Purpose
 
-With JDK17+
+Evolyn-API is responsible for:
+
+* Authenticating users
+* Issuing and validating JWT tokens
+* Enforcing authorization rules
+* Acting as an authentication gateway for Evolyn services
+
+Business logic and persistence are handled by downstream core services.
+
+---
+
+## Architecture Overview
+
+All client requests pass through Evolyn-API for authentication and authorization before reaching core services.
+
+```
+Frontend
+   ↓
+Evolyn-API (Helidon MP)
+   ↓ JWT
+Evolyn Core Service (Spring Boot)
+```
+
+---
+
+## Responsibilities
+
+* Handle login and authentication flows
+* Generate and sign JWT tokens
+* Validate incoming JWT tokens
+* Enforce authorization using MicroProfile Security
+* Secure APIs using JAX-RS filters
+* Provide health and readiness endpoints
+
+---
+
+## Tech Stack
+
+* Java 21
+* **Helidon MP (MicroProfile)**
+* Jakarta REST (JAX-RS)
+* MicroProfile Security
+* JWT (JSON Web Tokens)
+* JSON-B
+* Maven
+
+---
+
+## Project Structure
+
+```
+evolyn-api/
+├── api/
+│   ├── authentication/   # Login & auth endpoints
+│   ├── health/           # Health & readiness checks
+│   └── filters/          # Security & request filters
+├── security/             # JWT config & utilities
+├── config/               # application.yaml & MP config
+└── Main.java             # Helidon MP bootstrap
+```
+
+---
+
+## Security
+
+* JWT-based authentication using **MicroProfile JWT**
+* Tokens are issued after successful login
+* All protected endpoints require:
+
+```
+Authorization: Bearer <JWT_TOKEN>
+```
+
+* JWT validation is enforced via MP Security on each secured request
+
+---
+
+## Running the Service
+
+### Prerequisites
+
+* Java 17
+* Maven
+
+### Build
+
 ```bash
-mvn package
-java -jar target/evolyn-api.jar
+mvn clean package
 ```
 
-## Exercise the application
-```
-curl -X GET http://localhost:8080/simple-greet
-{"message":"Hello World!"}
-```
+### Run
 
-```
-curl -X GET http://localhost:8080/greet
-{"message":"Hello World!"}
-
-curl -X GET http://localhost:8080/greet/Joe
-{"message":"Hello Joe!"}
-
-curl -X PUT -H "Content-Type: application/json" -d '{"greeting" : "Hola"}' http://localhost:8080/greet/greeting
-
-curl -X GET http://localhost:8080/greet/Jose
-{"message":"Hola Jose!"}
+```bash
+java -jar target/*.jar
 ```
 
-
-
-## Try health
+Service runs at:
 
 ```
-curl -s -X GET http://localhost:8080/health
-{"outcome":"UP",...
-
+http://localhost:3001
 ```
 
+(port configurable via `application.yaml`)
 
+---
 
-## Building a Native Image
+## Example Authentication Flow
 
-Make sure you have GraalVM locally installed:
+1. Client sends login request
+2. Evolyn-API validates credentials
+3. Evolyn-API issues a signed JWT token
+4. Client sends JWT in `Authorization` header
+5. Protected APIs validate token before processing
 
-```
-$GRAALVM_HOME/bin/native-image --version
-```
+---
 
-Build the native image using the native image profile:
+## Health Check
 
-```
-mvn package -Pnative-image
-```
-
-This uses the helidon-maven-plugin to perform the native compilation using your installed copy of GraalVM. It might take a while to complete.
-Once it completes start the application using the native executable (no JVM!):
-
-```
-./target/evolyn-api
+```http
+GET /health
 ```
 
-Yep, it starts fast. You can exercise the application’s endpoints as before.
+Response:
 
-
-## Try metrics
-
-```
-# Prometheus Format
-curl -s -X GET http://localhost:8080/metrics
-# TYPE base:gc_g1_young_generation_count gauge
-. . .
-
-# JSON Format
-curl -H 'Accept: application/json' -X GET http://localhost:8080/metrics
-{"base":...
-. . .
+```json
+{
+  "status": "UP"
+}
 ```
 
 
+---
 
-## Building the Docker Image
+## Why Helidon MP Fits Evolyn
 
-```
-docker build -t evolyn-api .
-```
+* Standards-based (Jakarta EE & MicroProfile)
+* Annotation-driven, clean APIs
+* Built-in security & health checks
+* Cloud-native and lightweight
+* Easy onboarding for enterprise teams
 
-## Running the Docker Image
-
-```
-docker run --rm -p 8080:8080 evolyn-api:latest
-```
-
-Exercise the application as described above.
-                                
-
-## Run the application in Kubernetes
-
-If you don’t have access to a Kubernetes cluster, you can [install one](https://helidon.io/docs/latest/#/about/kubernetes) on your desktop.
-
-### Verify connectivity to cluster
-
-```
-kubectl cluster-info                        # Verify which cluster
-kubectl get pods                            # Verify connectivity to cluster
-```
-
-### Deploy the application to Kubernetes
-
-```
-kubectl create -f app.yaml                              # Deploy application
-kubectl get pods                                        # Wait for quickstart pod to be RUNNING
-kubectl get service  evolyn-api                     # Get service info
-kubectl port-forward service/evolyn-api 8081:8080   # Forward service port to 8081
-```
-
-You can now exercise the application as you did before but use the port number 8081.
-
-After you’re done, cleanup.
-
-```
-kubectl delete -f app.yaml
-```
-
-
-## Building a Custom Runtime Image
-
-Build the custom runtime image using the jlink image profile:
-
-```
-mvn package -Pjlink-image
-```
-
-This uses the helidon-maven-plugin to perform the custom image generation.
-After the build completes it will report some statistics about the build including the reduction in image size.
-
-The target/evolyn-api-jri directory is a self contained custom image of your application. It contains your application,
-its runtime dependencies and the JDK modules it depends on. You can start your application using the provide start script:
-
-```
-./target/evolyn-api-jri/bin/start
-```
-
-Class Data Sharing (CDS) Archive
-Also included in the custom image is a Class Data Sharing (CDS) archive that improves your application’s startup
-performance and in-memory footprint. You can learn more about Class Data Sharing in the JDK documentation.
-
-The CDS archive increases your image size to get these performance optimizations. It can be of significant size (tens of MB).
-The size of the CDS archive is reported at the end of the build output.
-
-If you’d rather have a smaller image size (with a slightly increased startup time) you can skip the creation of the CDS
-archive by executing your build like this:
-
-```
-mvn package -Pjlink-image -Djlink.image.addClassDataSharingArchive=false
-```
-
-For more information on available configuration options see the helidon-maven-plugin documentation.
-                                
+---
