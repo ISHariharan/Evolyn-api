@@ -1,0 +1,37 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: evolyn-api
+  labels:
+    app: evolyn-api
+spec:
+  type: ClusterIP
+  selector:
+    app: evolyn-api
+  ports:
+    - name: tcp
+      port: 8080
+      protocol: TCP
+      targetPort: 8080
+---
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: evolyn-api
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: evolyn-api
+  template:
+    metadata:
+      labels:
+        app: evolyn-api
+        version: v1
+    spec:
+      containers:
+      - name: evolyn-api
+        image: evolyn-api
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 8080
