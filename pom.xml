@@ -18,6 +18,10 @@
 
     <dependencies>
         <dependency>
+            <groupId>io.helidon.microprofile.bean-validation</groupId>
+            <artifactId>helidon-microprofile-bean-validation</artifactId>
+        </dependency>
+        <dependency>
             <groupId>io.helidon.microprofile.bundles</groupId>
             <artifactId>helidon-microprofile-core</artifactId>
         </dependency>
