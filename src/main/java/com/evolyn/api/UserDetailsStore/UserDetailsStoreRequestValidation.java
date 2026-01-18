@@ -7,7 +7,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
-public class UserDetailsStoreRequest {
+public class UserDetailsStoreRequestValidation {
     @NotNull(message = "UUID is required")
     private UUID uuid;
 

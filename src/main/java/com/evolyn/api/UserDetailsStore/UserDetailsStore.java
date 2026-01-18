@@ -14,7 +14,7 @@ import jakarta.ws.rs.core.Response;
 public class UserDetailsStore {
     @POST
     @Path("/userdetails")
-    public Response userDetailsStore(@Valid UserDetailsStoreRequest Request){
+    public Response userDetailsStore(@Valid UserDetailsStoreRequestValidation Request){
         System.out.println("Received the data : ");
         return Response.ok("Success").build();
     }
