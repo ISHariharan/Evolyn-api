@@ -61,7 +61,6 @@ public class UserDetailsStoreRequestValidation {
         return password;
     }
 
-    // NEVER log passwords
     public void setPassword(String password) {
         this.password = password;
     }

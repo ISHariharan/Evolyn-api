@@ -1,0 +1,3 @@
+evolyn-data-service:
+  mp-rest:
+    url: http://localhost:3002
