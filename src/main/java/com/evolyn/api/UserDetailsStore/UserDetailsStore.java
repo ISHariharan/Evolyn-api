@@ -1,5 +1,7 @@
 package com.evolyn.api.UserDetailsStore;
 
+import java.util.Map;
+
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 
 import jakarta.inject.Inject;
@@ -28,6 +30,6 @@ public class UserDetailsStore {
     public Response userDetailsStore(@Valid UserDetailsStoreRequestValidation Request){
         System.out.println("Received the data : " + Request.getPassword());
         authStore.storeUserDetails(Request);
-        return Response.ok("Successfully Saved").build();
+        return Response.ok(Map.of("message", "Successfully Saved"), MediaType.APPLICATION_JSON).build();
     }
 }
