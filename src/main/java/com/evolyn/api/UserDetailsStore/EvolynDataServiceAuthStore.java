@@ -5,6 +5,7 @@ import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
 
 @Path("/evolyn/api/internal")
 @RegisterRestClient(configKey="evolyn-data-service")
@@ -13,5 +14,5 @@ public interface EvolynDataServiceAuthStore {
 
     @POST
     @Path("/store/userdetails")
-    void storeUserDetails(UserDetailsStoreRequestValidation Request);
+    Response storeUserDetails(UserDetailsStoreRequestValidation Request);
 }

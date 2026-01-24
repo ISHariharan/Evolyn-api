@@ -29,7 +29,15 @@ public class UserDetailsStore {
     @Path("/userdetails")
     public Response userDetailsStore(@Valid UserDetailsStoreRequestValidation Request){
         System.out.println("Received the data : " + Request.getPassword());
-        authStore.storeUserDetails(Request);
+        
+        Response response = authStore.storeUserDetails(Request);
+        if (response.getStatus() > 400) {
+            return Response
+                    .status(response.getStatus())
+                    .entity(response.readEntity(String.class))
+                    .type(MediaType.APPLICATION_JSON)
+                    .build();
+        }
         return Response.ok(Map.of("message", "Successfully Saved"), MediaType.APPLICATION_JSON).build();
     }
 }
