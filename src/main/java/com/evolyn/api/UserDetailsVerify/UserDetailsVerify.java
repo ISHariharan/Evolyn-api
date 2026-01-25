@@ -35,4 +35,24 @@ public class UserDetailsVerify {
             }
             return Response.ok(Map.of("message", "User Found")).build();
         }
+
+        @POST
+        @Path("/loggedin/user")
+        public Response verifyUserDetails(@Valid VerifyLoggedinUserDTO Request) {
+            System.out.println("Verify Logged In User : " + Request.getEmail());
+            Response response =  userDetailsVerifyStore.verifyLoggedInUser(Request);
+
+            if(response.getStatus() > 400) {
+                return Response
+                        .status(response.getStatus())
+                        .entity(response.readEntity(String.class))
+                        .type(MediaType.APPLICATION_JSON)
+                        .build();
+            }
+            return Response
+                    .status(response.getStatus())
+                    .entity(response.readEntity(String.class))
+                    .type(MediaType.APPLICATION_JSON)
+                    .build();
+        }
 }

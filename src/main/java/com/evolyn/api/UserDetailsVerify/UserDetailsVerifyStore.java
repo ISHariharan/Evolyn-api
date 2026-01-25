@@ -16,4 +16,8 @@ public interface UserDetailsVerifyStore {
     @POST
     @Path("/verify/userdetails")
     Response verifyUserDetails(UserDetailsVerifyValidation Request);
+
+    @POST
+    @Path("/loggedin/user")
+    Response verifyLoggedInUser(VerifyLoggedinUserDTO Request);
 }
