@@ -1,40 +1,28 @@
-
-# 1st stage, build the app
-FROM container-registry.oracle.com/java/jdk-no-fee-term:17 as build
-
-WORKDIR /usr/share
-
-# Install maven
-RUN set -x && \
-    curl -O https://archive.apache.org/dist/maven/maven-3/3.8.4/binaries/apache-maven-3.8.4-bin.tar.gz && \
-    tar -xvf apache-maven-*-bin.tar.gz  && \
-    rm apache-maven-*-bin.tar.gz && \
-    mv apache-maven-* maven && \
-    ln -s /usr/share/maven/bin/mvn /bin/
-
+# ── Stage 1: build the jar with Maven ─────────────────────────────────────────
+FROM maven:3.9-eclipse-temurin-21 AS build
 WORKDIR /helidon
 
-# Create a first layer to cache the "Maven World" in the local repository.
-# Incremental docker builds will always resume after that, unless you update
-# the pom
-ADD pom.xml pom.xml
-RUN mvn package -Dmaven.test.skip -Declipselink.weave.skip -DskipOpenApiGenerate
+# Download dependencies first, in their own layer: when only source code changes,
+# Docker reuses this layer and the rebuild is much faster.
+COPY pom.xml .
+RUN mvn -B -q package -Dmaven.test.skip -Declipselink.weave.skip -DskipOpenApiGenerate || true
 
-# Do the Maven build!
-# Incremental docker builds will resume here when you change sources
-ADD src src
-RUN mvn package -DskipTests
+COPY src src
+RUN mvn -B -q -DskipTests package
 
-RUN echo "done!"
-
-# 2nd stage, build the runtime image
-FROM container-registry.oracle.com/java/jdk-no-fee-term:17
+# ── Stage 2: a small image with just the Java runtime, the jar and its libs ───
+FROM eclipse-temurin:21-jre
 WORKDIR /helidon
-
-# Copy the binary built in the 1st stage
 COPY --from=build /helidon/target/evolyn-api.jar ./
 COPY --from=build /helidon/target/libs ./libs
 
-CMD ["java", "-jar", "evolyn-api.jar"]
+# Render's free instances have 512 MB of memory:
+#  MaxRAMPercentage  - let the Java heap use at most 70% of the container's memory
+#  UseSerialGC       - the simplest garbage collector, with the least memory overhead
+#  Xss512k           - smaller thread stacks
+#  TieredStopAtLevel - faster start-up (matters when the service wakes from sleep)
+ENV JAVA_OPTS="-XX:MaxRAMPercentage=70 -XX:+UseSerialGC -Xss512k -XX:TieredStopAtLevel=1"
 
-EXPOSE 8080
+# Render sets PORT; the app reads it (server.port=${PORT:3001})
+EXPOSE 3001
+ENTRYPOINT ["sh", "-c", "exec java $JAVA_OPTS -jar evolyn-api.jar"]

@@ -1,3 +1,3 @@
-evolyn-data-service:
-  mp-rest:
-    url: http://localhost:3002
+# Configuration lives in META-INF/microprofile-config.properties
+# (the Data Service URL used to be duplicated here; keeping it in one place avoids
+# the two drifting apart).

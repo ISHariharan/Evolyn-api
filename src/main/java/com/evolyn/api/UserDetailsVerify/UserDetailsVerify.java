@@ -24,7 +24,6 @@ public class UserDetailsVerify {
         @Path("/userdetails")
         public Response userDetailsVerify(@Valid UserDetailsVerifyValidation Request) {
             System.out.println("Received the data : " + Request.getEmail());
-            System.out.println("Received the data : " + Request.getPassword());
             Response response = userDetailsVerifyStore.verifyUserDetails(Request);
             if(response.getStatus() > 400) {
                 return Response

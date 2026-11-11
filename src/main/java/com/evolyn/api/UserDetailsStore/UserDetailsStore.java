@@ -28,7 +28,6 @@ public class UserDetailsStore {
     @POST
     @Path("/userdetails")
     public Response userDetailsStore(@Valid UserDetailsStoreRequestValidation Request){
-        System.out.println("Received the data : " + Request.getPassword());
         
         Response response = authStore.storeUserDetails(Request);
         if (response.getStatus() > 400) {
