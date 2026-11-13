@@ -19,6 +19,10 @@ public interface DashboardStore {
     Response summary(@QueryParam("userId") UUID userId, @QueryParam("from") String from, @QueryParam("to") String to);
 
     @GET
+    @Path("/accounts")
+    Response accounts(@QueryParam("userId") UUID userId, @QueryParam("today") String today);
+
+    @GET
     @Path("/trend")
     Response trend(@QueryParam("userId") UUID userId, @QueryParam("from") String from, @QueryParam("to") String to);
 }

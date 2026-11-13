@@ -1,8 +1,15 @@
 package com.evolyn.api.Accounts;
 
+import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.UUID;
 
+import jakarta.validation.constraints.DecimalMin;
+import jakarta.validation.constraints.Digits;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.PastOrPresent;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
@@ -26,6 +33,23 @@ public class AccountDTO {
     @Pattern(regexp = "^$|\\d{4}", message = "Last 4 digits must be exactly 4 numbers")
     private String last4;
 
+    // Optional: balance at the start of openingBalanceDate (for a credit card: amount owed).
+    // Can be negative, e.g. an overdrawn account.
+    @Digits(integer = 10, fraction = 2, message = "Opening balance can have at most 2 decimal places")
+    private BigDecimal openingBalance;
+
+    @PastOrPresent(message = "Opening balance date can't be in the future")
+    private LocalDate openingBalanceDate;
+
+    // Credit cards only
+    @DecimalMin(value = "0", message = "Credit limit can't be negative")
+    @Digits(integer = 10, fraction = 2, message = "Credit limit can have at most 2 decimal places")
+    private BigDecimal creditLimit;
+
+    @Min(value = 1, message = "Statement day must be between 1 and 28")
+    @Max(value = 28, message = "Statement day must be between 1 and 28")
+    private Integer statementDay;
+
     public UUID getUserId() { return userId; }
     public void setUserId(UUID userId) { this.userId = userId; }
 
@@ -37,4 +61,16 @@ public class AccountDTO {
 
     public String getLast4() { return last4; }
     public void setLast4(String last4) { this.last4 = last4; }
+
+    public BigDecimal getOpeningBalance() { return openingBalance; }
+    public void setOpeningBalance(BigDecimal openingBalance) { this.openingBalance = openingBalance; }
+
+    public LocalDate getOpeningBalanceDate() { return openingBalanceDate; }
+    public void setOpeningBalanceDate(LocalDate openingBalanceDate) { this.openingBalanceDate = openingBalanceDate; }
+
+    public BigDecimal getCreditLimit() { return creditLimit; }
+    public void setCreditLimit(BigDecimal creditLimit) { this.creditLimit = creditLimit; }
+
+    public Integer getStatementDay() { return statementDay; }
+    public void setStatementDay(Integer statementDay) { this.statementDay = statementDay; }
 }

@@ -23,6 +23,7 @@ import jakarta.ws.rs.core.Response;
  * Public endpoints the dashboard page calls:
  *   GET /evolyn/api/dashboard/summary?userId=&from=&to=
  *   GET /evolyn/api/dashboard/trend?userId=&from=&to=
+ *   GET /evolyn/api/dashboard/accounts?userId=&today=
  */
 @Path("/evolyn/api/dashboard")
 @ValidateOnExecution
@@ -54,6 +55,19 @@ public class DashboardResource {
         String problem = checkRange(from, to);
         if (problem != null) return badRequest(problem);
         return DataServiceCall.forward(() -> dashboardStore.trend(userId, from, to));
+    }
+
+    /** Current balance of each account; `today` is the user's local date (YYYY-MM-DD). */
+    @GET
+    @Path("/accounts")
+    public Response accounts(@NotNull(message = "userId is required") @QueryParam("userId") UUID userId,
+                             @QueryParam("today") String today) {
+        try {
+            LocalDate.parse(today == null ? "" : today);
+        } catch (DateTimeParseException e) {
+            return badRequest("today must be a date in YYYY-MM-DD format");
+        }
+        return DataServiceCall.forward(() -> dashboardStore.accounts(userId, today));
     }
 
     // Returns an error message, or null when the range is fine

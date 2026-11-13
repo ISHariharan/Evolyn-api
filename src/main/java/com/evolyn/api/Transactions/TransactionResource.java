@@ -53,7 +53,7 @@ public class TransactionResource {
     @GET
     public Response listTransactions(
             @NotNull(message = "userId is required") @QueryParam("userId") UUID userId,
-            @Pattern(regexp = "EXPENSE|INCOME", message = "type must be EXPENSE or INCOME") @QueryParam("type") String type,
+            @Pattern(regexp = "EXPENSE|INCOME|TRANSFER", message = "type must be EXPENSE, INCOME or TRANSFER") @QueryParam("type") String type,
             @QueryParam("categoryId") UUID categoryId,
             @QueryParam("accountId") UUID accountId,
             @Pattern(regexp = ISO_DATE, message = "from must be YYYY-MM-DD") @QueryParam("from") String from,

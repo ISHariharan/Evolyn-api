@@ -27,7 +27,7 @@ public class TransactionDTO {
     private UUID accountId;
 
     @NotBlank(message = "Type is required")
-    @Pattern(regexp = "EXPENSE|INCOME", message = "Type must be EXPENSE or INCOME")
+    @Pattern(regexp = "EXPENSE|INCOME|TRANSFER", message = "Type must be EXPENSE, INCOME or TRANSFER")
     private String type;
 
     @NotNull(message = "Amount is required")
@@ -40,8 +40,12 @@ public class TransactionDTO {
     @PastOrPresent(message = "Date cannot be in the future")
     private LocalDate transactionDate;
 
-    @NotNull(message = "Category is required")
+    // Required for EXPENSE / INCOME, not used for TRANSFER (the Data Service checks this,
+    // since it depends on the type)
     private UUID categoryId;
+
+    // TRANSFER only: where the money goes (e.g. the credit card when paying its bill)
+    private UUID toAccountId;
 
     @NotBlank(message = "Merchant / description is required")
     @Size(max = 100, message = "Merchant / description can be at most 100 characters")
@@ -69,6 +73,9 @@ public class TransactionDTO {
 
     public LocalDate getTransactionDate() { return transactionDate; }
     public void setTransactionDate(LocalDate transactionDate) { this.transactionDate = transactionDate; }
+
+    public UUID getToAccountId() { return toAccountId; }
+    public void setToAccountId(UUID toAccountId) { this.toAccountId = toAccountId; }
 
     public UUID getCategoryId() { return categoryId; }
     public void setCategoryId(UUID categoryId) { this.categoryId = categoryId; }
