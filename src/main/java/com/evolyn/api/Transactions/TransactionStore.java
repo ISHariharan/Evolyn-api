@@ -32,7 +32,7 @@ public interface TransactionStore {
     @GET
     Response listTransactions(@QueryParam("userId") UUID userId,
                               @QueryParam("type") String type,
-                              @QueryParam("category") String category,
+                              @QueryParam("categoryId") UUID categoryId,
                               @QueryParam("accountId") UUID accountId,
                               @QueryParam("from") String from,
                               @QueryParam("to") String to,

@@ -28,7 +28,7 @@ import jakarta.ws.rs.core.Response;
 /**
  * Public endpoints the frontend calls:
  *   POST   /evolyn/api/transactions
- *   GET    /evolyn/api/transactions?userId=&type=&category=&accountId=&from=&to=&page=&size=
+ *   GET    /evolyn/api/transactions?userId=&type=&categoryId=&accountId=&from=&to=&page=&size=
  *   GET    /evolyn/api/transactions/{id}?userId=
  *   PUT    /evolyn/api/transactions/{id}
  *   DELETE /evolyn/api/transactions/{id}?userId=
@@ -54,7 +54,7 @@ public class TransactionResource {
     public Response listTransactions(
             @NotNull(message = "userId is required") @QueryParam("userId") UUID userId,
             @Pattern(regexp = "EXPENSE|INCOME", message = "type must be EXPENSE or INCOME") @QueryParam("type") String type,
-            @QueryParam("category") String category,
+            @QueryParam("categoryId") UUID categoryId,
             @QueryParam("accountId") UUID accountId,
             @Pattern(regexp = ISO_DATE, message = "from must be YYYY-MM-DD") @QueryParam("from") String from,
             @Pattern(regexp = ISO_DATE, message = "to must be YYYY-MM-DD") @QueryParam("to") String to,
@@ -62,7 +62,7 @@ public class TransactionResource {
             @Min(value = 1, message = "size must be 1-100") @Max(value = 100, message = "size must be 1-100")
             @DefaultValue("10") @QueryParam("size") Integer size) {
         return DataServiceCall.forward(() ->
-                transactionStore.listTransactions(userId, type, category, accountId, from, to, page, size));
+                transactionStore.listTransactions(userId, type, categoryId, accountId, from, to, page, size));
     }
 
     @GET

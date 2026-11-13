@@ -40,9 +40,8 @@ public class TransactionDTO {
     @PastOrPresent(message = "Date cannot be in the future")
     private LocalDate transactionDate;
 
-    @NotBlank(message = "Category is required")
-    @Size(max = 50, message = "Category is too long")
-    private String category;
+    @NotNull(message = "Category is required")
+    private UUID categoryId;
 
     @NotBlank(message = "Merchant / description is required")
     @Size(max = 100, message = "Merchant / description can be at most 100 characters")
@@ -71,8 +70,8 @@ public class TransactionDTO {
     public LocalDate getTransactionDate() { return transactionDate; }
     public void setTransactionDate(LocalDate transactionDate) { this.transactionDate = transactionDate; }
 
-    public String getCategory() { return category; }
-    public void setCategory(String category) { this.category = category; }
+    public UUID getCategoryId() { return categoryId; }
+    public void setCategoryId(UUID categoryId) { this.categoryId = categoryId; }
 
     public String getMerchant() { return merchant; }
     public void setMerchant(String merchant) { this.merchant = merchant; }
