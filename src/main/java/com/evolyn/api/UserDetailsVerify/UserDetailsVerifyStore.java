@@ -5,7 +5,11 @@ import org.eclipse.microprofile.rest.client.inject.RegisterRestClient;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.Consumes;
+import java.util.UUID;
+
+import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
+import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Path;
 
 @Path("evolyn/api/internal")
@@ -17,7 +21,8 @@ public interface UserDetailsVerifyStore {
     @Path("/verify/userdetails")
     Response verifyUserDetails(UserDetailsVerifyValidation Request);
 
-    @POST
-    @Path("/loggedin/user")
-    Response verifyLoggedInUser(VerifyLoggedinUserDTO Request);
+    // One user's own details, by id
+    @GET
+    @Path("/users/{userId}")
+    Response userById(@PathParam("userId") UUID userId);
 }
