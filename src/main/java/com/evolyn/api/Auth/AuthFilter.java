@@ -85,10 +85,13 @@ public class AuthFilter implements ContainerRequestFilter {
         }
     }
 
-    // Logging in, signing up, and the activity catalogue (public reference data)
+    // Logging in, signing up (and checking a Profile ID is free while doing so),
+    // and the activity catalogue (public reference data)
     private static boolean isPublic(String method, String path) {
         return (HttpMethod.POST.equals(method) && path.equals("evolyn/api/verify/userdetails"))
                 || (HttpMethod.POST.equals(method) && path.equals("evolyn/api/store/userdetails"))
+                || (HttpMethod.GET.equals(method) && path.startsWith("evolyn/api/profile-ids/")
+                        && path.endsWith("/availability"))
                 || (HttpMethod.GET.equals(method) && (path.equals("evolyn/api/activity-definitions")
                         || path.startsWith("evolyn/api/activity-definitions/")));
     }

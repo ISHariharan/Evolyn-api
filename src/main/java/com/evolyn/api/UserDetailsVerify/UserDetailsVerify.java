@@ -24,7 +24,7 @@ import jakarta.ws.rs.core.Response;
  * POST /evolyn/api/verify/userdetails   (login, one of the few endpoints that needs no token)
  *
  * On success it answers with a signed login token and the user's details:
- *   { "message", "token", "expiresAt", "user": { "id", "email", "firstName", "lastName" } }
+ *   { "message", "token", "expiresAt", "user": { "id", "email", "firstName", "lastName", "profileId" } }
  * The browser sends the token as "Authorization: Bearer <token>" on every later
  * request, and AuthFilter takes the user id from it.
  *
@@ -64,7 +64,8 @@ public class UserDetailsVerify {
                         "id", user.getString("id"),
                         "email", user.getString("email", ""),
                         "firstName", user.getString("firstName", ""),
-                        "lastName", user.getString("lastName", ""))))
+                        "lastName", user.getString("lastName", ""),
+                        "profileId", user.getString("profileId", "")))) // "" = not chosen yet
                 .build();
     }
 }

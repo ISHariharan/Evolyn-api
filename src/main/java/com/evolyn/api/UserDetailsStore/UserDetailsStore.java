@@ -1,5 +1,7 @@
 package com.evolyn.api.UserDetailsStore;
 
+import com.evolyn.api.Common.DataServiceCall;
+
 import java.util.Map;
 
 import org.eclipse.microprofile.rest.client.inject.RestClient;
@@ -28,14 +30,11 @@ public class UserDetailsStore {
     @POST
     @Path("/userdetails")
     public Response userDetailsStore(@Valid UserDetailsStoreRequestValidation Request){
-        
-        Response response = authStore.storeUserDetails(Request);
-        if (response.getStatus() > 400) {
-            return Response
-                    .status(response.getStatus())
-                    .entity(response.readEntity(String.class))
-                    .type(MediaType.APPLICATION_JSON)
-                    .build();
+        // forward() passes the Data Service's errors (email taken, Profile ID taken...) straight through;
+        // before, a 400 from it was reported as "Successfully Saved"
+        Response response = DataServiceCall.forward(() -> authStore.storeUserDetails(Request));
+        if (response.getStatus() >= 300) {
+            return response;
         }
         return Response.ok(Map.of("message", "Successfully Saved"), MediaType.APPLICATION_JSON).build();
     }
