@@ -33,6 +33,10 @@ public final class DataServiceCall {
 
     private static Response copy(Response upstream) {
         Response.ResponseBuilder out = Response.status(upstream.getStatus());
+        // A response made here (e.g. the retry's "busy" message) already holds its text
+        if (upstream.getEntity() instanceof String text) {
+            return out.type(MediaType.APPLICATION_JSON).entity(text).build();
+        }
         try {
             if (upstream.hasEntity()) {
                 out.type(MediaType.APPLICATION_JSON).entity(upstream.readEntity(String.class));

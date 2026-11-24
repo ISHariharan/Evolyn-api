@@ -2,6 +2,7 @@ package com.evolyn.api.Goals;
 
 import java.util.UUID;
 
+import com.evolyn.api.Common.DataServiceRetry;
 import org.eclipse.microprofile.rest.client.inject.RegisterRestClient;
 
 import jakarta.ws.rs.Consumes;
@@ -15,6 +16,7 @@ import jakarta.ws.rs.core.Response;
 
 /** REST client for the Data Service's tribe goal and dashboard endpoints. */
 @Path("/evolyn/api/internal/tribes/{tribeId}")
+@DataServiceRetry
 @RegisterRestClient(configKey = "evolyn-data-service")
 @Consumes(MediaType.APPLICATION_JSON)
 public interface GoalStore {

@@ -2,6 +2,7 @@ package com.evolyn.api.Categories;
 
 import java.util.UUID;
 
+import com.evolyn.api.Common.DataServiceRetry;
 import org.eclipse.microprofile.rest.client.inject.RegisterRestClient;
 
 import jakarta.ws.rs.Consumes;
@@ -17,6 +18,7 @@ import jakarta.ws.rs.core.Response;
 
 /** REST client for the Data Service's category endpoints. */
 @Path("/evolyn/api/internal/categories")
+@DataServiceRetry
 @RegisterRestClient(configKey = "evolyn-data-service")
 @Consumes(MediaType.APPLICATION_JSON)
 public interface CategoryStore {

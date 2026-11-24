@@ -1,5 +1,6 @@
 package com.evolyn.api.Workspace.Retrieve;
 
+import com.evolyn.api.Common.DataServiceRetry;
 import org.eclipse.microprofile.rest.client.inject.RegisterRestClient;
 
 
@@ -11,6 +12,7 @@ import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 
 @Path("/evolyn/api/internal")
+@DataServiceRetry
 @RegisterRestClient(configKey = "evolyn-data-service")
 @Consumes(MediaType.APPLICATION_JSON)
 public interface RetrieveWorkspaceStore {

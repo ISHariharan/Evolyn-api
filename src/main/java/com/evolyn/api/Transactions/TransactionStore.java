@@ -2,6 +2,7 @@ package com.evolyn.api.Transactions;
 
 import java.util.UUID;
 
+import com.evolyn.api.Common.DataServiceRetry;
 import org.eclipse.microprofile.rest.client.inject.RegisterRestClient;
 
 import jakarta.ws.rs.Consumes;
@@ -22,6 +23,7 @@ import jakarta.ws.rs.core.Response;
  * Null @QueryParam values are simply left out of the URL.
  */
 @Path("/evolyn/api/internal/transactions")
+@DataServiceRetry
 @RegisterRestClient(configKey = "evolyn-data-service")
 @Consumes(MediaType.APPLICATION_JSON)
 public interface TransactionStore {
