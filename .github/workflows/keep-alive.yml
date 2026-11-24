@@ -1,14 +1,18 @@
-# Keeps Evolyn-API and Evolyn-Data-Service awake from 6 pm to 10 pm India time, every day.
+# Keeps Evolyn-API and Evolyn-Data-Service awake from 4 am to 8 am India time, every day.
 #
 # Render's free plan puts a service to sleep after 15 minutes without requests, and waking it
-# takes about a minute. Pinging both every 10 minutes in the evening keeps them warm while
+# takes about a minute. Pinging both every 10 minutes in the morning keeps them warm while
 # people use the app, and lets them sleep the rest of the day (free plan hours last longer).
 #
 # GitHub's schedule is in UTC (India = UTC + 5:30), and scheduled runs can start a few minutes
-# late, so the first ping is at 5:55 pm and the minutes avoid :00 (GitHub's busiest moment).
-#   12:25-12:55 UTC = 5:55-6:25 pm IST
-#   13:05-15:55 UTC = 6:35-9:25 pm IST
-#   16:05-16:25 UTC = 9:35-9:55 pm IST   (last ping 9:55 pm: asleep by about 10:10 pm)
+# late, so the first ping is at 3:55 am and the minutes avoid :00 (GitHub's busiest moment).
+# The window crosses midnight UTC, so 3:55-4:25 am IST is still "yesterday" in UTC.
+#   22:25-22:55 UTC = 3:55-4:25 am IST
+#   23:05-01:55 UTC = 4:35-7:25 am IST
+#   02:05-02:25 UTC = 7:35-7:55 am IST   (last ping 7:55 am: asleep by about 8:10 am)
+#
+# GitHub runs free scheduled jobs on a best-effort basis: they can start late or be skipped
+# when GitHub is busy.
 #
 # Run it by hand from the Actions tab: "Keep services awake" > Run workflow.
 
@@ -16,9 +20,9 @@ name: Keep services awake
 
 on:
   schedule:
-    - cron: "25-55/10 12 * * *"
-    - cron: "5-55/10 13-15 * * *"
-    - cron: "5-25/10 16 * * *"
+    - cron: "25-55/10 22 * * *"
+    - cron: "5-55/10 23,0,1 * * *"
+    - cron: "5-25/10 2 * * *"
   workflow_dispatch:
 
 permissions: {}
