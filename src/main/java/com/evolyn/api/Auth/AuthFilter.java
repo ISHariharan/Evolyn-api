@@ -31,7 +31,9 @@ import jakarta.ws.rs.ext.Provider;
  * Runs before every request to Evolyn-API.
  *
  * 1. Anything under /evolyn/api/ needs "Authorization: Bearer <login token>",
- *    except logging in, signing up and the public activity catalogue.
+ *    except logging in, signing up, resetting a forgotten password (with a recovery code)
+ *    and the public
+ *    activity catalogue.
  *    No token, or a forged/expired one -> 401, and the browser logs out.
  *
  * 2. The token says who you are, so the browser no longer gets a say:
@@ -89,6 +91,7 @@ public class AuthFilter implements ContainerRequestFilter {
     // and the activity catalogue (public reference data)
     private static boolean isPublic(String method, String path) {
         return (HttpMethod.POST.equals(method) && path.equals("evolyn/api/verify/userdetails"))
+                || (HttpMethod.POST.equals(method) && path.equals("evolyn/api/password-reset"))
                 || (HttpMethod.POST.equals(method) && path.equals("evolyn/api/store/userdetails"))
                 || (HttpMethod.GET.equals(method) && path.startsWith("evolyn/api/profile-ids/")
                         && path.endsWith("/availability"))
