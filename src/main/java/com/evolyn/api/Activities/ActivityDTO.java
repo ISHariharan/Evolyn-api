@@ -16,8 +16,9 @@ import jakarta.validation.constraints.Size;
 
 /**
  * What the browser sends to log or edit an activity.
- * There is deliberately no calories field: the Data Service works them out
- * from the activity's MET value and your weight, so nobody can send their own number.
+ * Calories are normally worked out by the Data Service from the activity's MET value
+ * and your weight. enteredKcal is for people who have the number from a watch or a gym
+ * machine: it's used instead, and tribes see that it was entered.
  */
 public class ActivityDTO {
 
@@ -51,6 +52,11 @@ public class ActivityDTO {
     // true after the person confirmed an overlapping activity is a separate one
     private Boolean allowOverlap;
 
+    // Calories burned, from a watch or a gym machine (empty = use the estimate)
+    @Min(value = 1, message = "Calories burned must be between 1 and 5,000 kcal")
+    @Max(value = 5000, message = "Calories burned must be between 1 and 5,000 kcal")
+    private Integer enteredKcal;
+
     public UUID getUserId() { return userId; }
     public void setUserId(UUID userId) { this.userId = userId; }
 
@@ -74,4 +80,7 @@ public class ActivityDTO {
 
     public Boolean getAllowOverlap() { return allowOverlap; }
     public void setAllowOverlap(Boolean allowOverlap) { this.allowOverlap = allowOverlap; }
+
+    public Integer getEnteredKcal() { return enteredKcal; }
+    public void setEnteredKcal(Integer enteredKcal) { this.enteredKcal = enteredKcal; }
 }
